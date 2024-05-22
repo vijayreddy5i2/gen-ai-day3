@@ -1,0 +1,71 @@
+
+
+// Creating the 'department' collection
+db.createCollection("department");
+
+// Creating the 'year' collection
+db.createCollection("year");
+
+// Creating the 'students' collection
+db.createCollection("students");
+Inserting Data
+You can insert data directly into MongoDB collections using the insertOne() or insertMany() methods.
+
+
+// Inserting data into the 'department' collection
+db.department.insertMany([
+    { dept_id: 1, dept_name: "CSE" },
+    { dept_id: 2, dept_name: "ECE" },
+    { dept_id: 3, dept_name: "Mechanical" },
+    { dept_id: 4, dept_name: "Civil" }
+]);
+
+// Inserting data into the 'year' collection
+db.year.insertMany([
+    { year_id: 1, year_name: "First Year" },
+    { year_id: 2, year_name: "Second Year" },
+    { year_id: 3, year_name: "Third Year" },
+    { year_id: 4, year_name: "Fourth Year" }
+]);
+
+// Inserting data into the 'students' collection
+db.students.insertMany([
+    { student_id: 1, student_name: "John Doe", dept_id: 1, year_id: 2 },
+    { student_id: 2, student_name: "Jane Smith", dept_id: 1, year_id: 3 },
+    { student_id: 3, student_name: "Alice Johnson", dept_id: 1, year_id: 1 },
+    { student_id: 4, student_name: "Bob Brown", dept_id: 1, year_id: 2 },
+    { student_id: 5, student_name: "Charlie Davis", dept_id: 1, year_id: 4 },
+
+    { student_id: 6, student_name: "David Lee", dept_id: 2, year_id: 2 },
+    { student_id: 7, student_name: "Eva Martinez", dept_id: 2, year_id: 1 },
+    { student_id: 8, student_name: "Frank Wilson", dept_id: 2, year_id: 3 },
+    { student_id: 9, student_name: "Grace Taylor", dept_id: 2, year_id: 4 },
+    { student_id: 10, student_name: "Harry Clark", dept_id: 2, year_id: 3 }
+]);
+Queries (Equivalent to SQL Queries):
+MongoDB queries use a different syntax compared to SQL queries. Here's how you can perform similar operations in MongoDB:
+
+Query to Display Students from CSE Department:
+
+
+db.students.find({ dept_id: 1 }); // Assuming 'CSE' has dept_id = 1
+Query to Display Only Department Names Using Student Collection:
+
+
+db.students.distinct("dept_name");
+Query to Display Students Sorted by Department and First Name:
+
+
+db.students.aggregate([
+    {
+        $lookup: {
+            from: "department",
+            localField: "dept_id",
+            foreignField: "dept_id",
+            as: "department"
+        }
+    },
+    { $unwind: "$department" },
+    { $sort: { "department.dept_name": 1, "student_name": 1 } },
+    { $project: { _id: 0, student_id: 1, student_name: 1, "department.dept_name": 1 } }
+]);
